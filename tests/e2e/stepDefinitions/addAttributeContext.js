@@ -11,6 +11,7 @@ When(
   }
 );
 //dummy comment to practice CI-CD
+//dummy comment 
 Then(
   'user {string} should be able to view all attributes with name {string}',
   async function (string, name, dataTable) {
