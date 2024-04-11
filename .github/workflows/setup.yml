@@ -20,6 +20,7 @@ jobs:
       # - uses: harmon758/postgresql-action@v4
       #   with:
       #     postgresql version: "14"
+
       # - uses: ikalnytskyi/action-setup-postgres@v5
       #   with:
       #     username: postgres
@@ -28,7 +29,7 @@ jobs:
       #     database: evershop
       #     port: 5432
 
-      - name: Set up PostgreSQL
+      - name: Set-up PostgreSQL
         run: |
             sudo apt-get update
             sudo apt-get install -y postgresql postgresql-contrib
@@ -38,20 +39,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # - name: install postgresql
-      #   run: |
-      #     sudo apt install postgresql postgresql-contrib
-      #     sudo systemctl start postgresql.service
-      #   with:
-      #     postgresql-version: 14
-
-# create your admin user
-      # - name: Create database schema
-      #   run: |
-      #     npm run setup
-      #   with:
-      #     admin_email: ${{ secrets.ADMIN_EMAIL }}
-      #     admin_password: ${{ secrets.ADMIN_PASSWORD }}
+      # create your admin user
+      - name: Create database schema
+        run: |
+          npm run setup
+        with:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: evershop
+          DB_USER: postgres
+          # DB_PASSWORD: pgAdmin12345
+          # admin_email: ${{ secrets.ADMIN_EMAIL }}
+          # admin_password: ${{ secrets.ADMIN_PASSWORD }}
 
   # ui-tests:
   #   runs-on: ubuntu-latest
