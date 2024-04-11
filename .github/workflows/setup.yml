@@ -52,13 +52,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-          
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Start development server
         run: npm run dev
 
       - name: Run e2e tests
         working-directory: tests
         run: |
-          npm install
           npx playwright install chromium
           npm run test:e2e e2e/features/adminLogin.feature
