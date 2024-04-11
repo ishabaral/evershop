@@ -43,7 +43,7 @@ jobs:
       - name: Create database schema
         run: |
           npm run setup
-        with:
+        env:
           DB_HOST: localhost
           DB_PORT: 5432
           DB_NAME: evershop
