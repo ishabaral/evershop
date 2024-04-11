@@ -48,9 +48,9 @@ jobs:
           DB_PORT: 5432
           DB_NAME: evershop
           DB_USER: postgres
-          # DB_PASSWORD: pgAdmin12345
-          # admin_email: ${{ secrets.ADMIN_EMAIL }}
-          # admin_password: ${{ secrets.ADMIN_PASSWORD }}
+          DB_PASSWORD: pgAdmin12345
+          ADMIN_EMAIL: prasantgrg777@gmail.com
+          ADMIN_PASSWORD: pSynidexxx.899
 
   # ui-tests:
   #   runs-on: ubuntu-latest
