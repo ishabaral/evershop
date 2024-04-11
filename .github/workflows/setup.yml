@@ -62,5 +62,7 @@ jobs:
       - name: Run e2e tests
         working-directory: tests
         run: |
+          npm install @playwright/test 
+          npm install playwright
           npx playwright install chromium
           npm run test:e2e e2e/features/adminLogin.feature
