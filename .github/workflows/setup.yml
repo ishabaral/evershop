@@ -65,4 +65,4 @@ jobs:
           npm install @playwright/test 
           npm install playwright
           npx playwright install chromium
-          npm run test:e2e e2e/features/adminLogin.feature
+          npm run test:e2e e2e/features/viewOrders.feature
