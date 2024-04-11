@@ -1,0 +1,58 @@
+name: testing workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ikalnytskyi/action-setup-postgres@v5
+      - name: Postgres setup
+        run: |
+          createdb --owner $PGUSER $PGDATABASE
+          psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
+        env:
+          PGHOST: localhost
+          PGDATABASE: evershop
+          PGUSER: postgres
+          PGPASSWORD: postgres
+        shell: bash
+
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2 
+        with:
+          node-version: 18
+
+      - name: Setup node js
+        run: npm install
+
+      - name: Run setup environment
+        run:  npm run setup
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: evershop
+          PGUSER: postgres
+          PGPASSWORD: postgres 
+          USER: abc
+          EMAIL: abc@abc.com
+          PASSWORD: abc1234
+
+      - name: Setup node js for testing
+        working-directory: tests
+        run: npm install
+
+      - name: Install Playwright Browsers
+        working-directory: tests
+        run: npx playwright install
+
+      - name: Run e2e tests
+        working-directory: tests
+        run: npm run test:e2e
