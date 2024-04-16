@@ -1,4 +1,4 @@
-name: testing workflow
+name: Testing workflow
 
 on:
   push:
@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ikalnytskyi/action-setup-postgres@v5
       - name: Postgres setup
+      - uses: ikalnytskyi/action-setup-postgres@v5
         run: |
           createdb --owner $PGUSER $PGDATABASE
           psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
@@ -30,11 +30,10 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup node js
+      - name: Install dependencies
         run: npm install
 
       - name: Run setup environment
-        run:  npm run setup
         env:
           PGHOST: localhost
           PGPORT: 5432
@@ -44,8 +43,11 @@ jobs:
           USER: abc
           EMAIL: abc@abc.com
           PASSWORD: abc1234
+        run:  |
+          npm run setup
+          npm run dev &
 
-      - name: Setup node js for testing
+      - name: Install dependencies for testing
         working-directory: tests
         run: npm install
 
