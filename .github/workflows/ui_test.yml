@@ -13,20 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Postgres code
+        uses: ikalnytskyi/action-setup-postgres@v5
+
       - name: Postgres setup
-      - uses: ikalnytskyi/action-setup-postgres@v5
-        run: |
-          createdb --owner $PGUSER $PGDATABASE
-          psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
         env:
           PGHOST: localhost
           PGDATABASE: evershop
           PGUSER: postgres
           PGPASSWORD: postgres
-        shell: bash
+        run: |
+          createdb --owner $PGUSER $PGDATABASE
+          psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
 
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2 
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2 
         with:
           node-version: 18
 
