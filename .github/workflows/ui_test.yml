@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Postgres code
-        uses: ikalnytskyi/action-setup-postgres@v5
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - uses: ikalnytskyi/action-setup-postgres@v5
 
-      - name: Postgres setup
+      - name: Setup db
         env:
           PGHOST: localhost
           PGDATABASE: evershop
@@ -26,8 +28,6 @@ jobs:
           createdb --owner $PGUSER $PGDATABASE
           psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Setup node
         uses: actions/setup-node@v2 
@@ -51,14 +51,13 @@ jobs:
           npm run setup
           npm run dev &
 
-      - name: Install dependencies for testing
-        working-directory: tests
-        run: npm install
-
-      - name: Install Playwright Browsers
-        working-directory: tests
-        run: npx playwright install
+      -  name: Wait for development server
+         run: 
+            while ! curl -s -k http://localhost:3000 > /dev/null; do sleep 1; done
 
       - name: Run e2e tests
         working-directory: tests
-        run: npm run test:e2e
+        run: |
+          npm install
+          npx playwright install
+          npm run test:e2e
