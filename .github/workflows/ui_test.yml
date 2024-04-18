@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  tests:
+  run_project:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,14 +50,15 @@ jobs:
         run:  |
           npm run setup
           npm run dev &
-
-      -  name: Wait for development server
-         run: 
-            while ! curl -s -k http://localhost:3000 > /dev/null; do sleep 1; done
+        
+      - name: Wait for development server
+        run: |
+          sudo apt-get install wait-for-it -y
+          wait-for-it -h localhost -p 3000 -t 10
 
       - name: Run e2e tests
         working-directory: tests
         run: |
           npm install
-          npx playwright install
-          npm run test:e2e
+          npx playwright install chromium
+          npm run test:e2e e2e
