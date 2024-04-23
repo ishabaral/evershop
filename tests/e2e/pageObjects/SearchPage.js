@@ -1,6 +1,6 @@
 class Search {
     constructor () {
-        this.resultHeadingSelector = ".no-result > h3";
+        this.displayResultSelector = '//div[text()="TRY OTHER RESOURCES"]';
         this.searchResultSelector = ".item-category>a>div.font-bold";
     }
 }

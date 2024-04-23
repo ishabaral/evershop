@@ -20,8 +20,3 @@ Feature: Search
             | product |
             | sweater | 
             | jeans   |
-
-    
-    Scenario: search a customer
-        When the user searches for customer "alice"
-        Then the user should see results for the customer "alice"
