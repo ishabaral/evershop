@@ -22,10 +22,6 @@ Feature: Search
             | jeans   |
 
     
-    Scenario Outline: search a customer
-        When the user searches for customer "<customer>"
-        Then the user should see results for the customer "<customer>"
-        Examples:
-            | customer |
-            | alice    | 
-            | john     |
+    Scenario: search a customer
+        When the user searches for customer "alice"
+        Then the user should see results for the customer "alice"

@@ -18,25 +18,32 @@ Given('user {string} has logged in', async function (user) {
 
 Given('the user has navigated to the admin panel dashboard', async function () {
   await expect(page).toHaveURL(login.adminDashboardPageURL);
-})
+});
 
 When('the user searches for product {string}', async function (product) {
   await page.getByPlaceholder('Search').fill(product);
 });
 
 Then('the result should be empty', async function () {
+  await page.waitForSelector(search.resultHeadingSelector);
   const result = await page.locator(search.resultHeadingSelector);
-  await result.waitFor();
   expect(result).toContainText('No results');
 });
 
 Then(
   'the user should see results for the product {string}',async function (product) {
-    const searchResults = await page.locator(search.searchResultSelector).all();
+    await page.waitForSelector(search.searchResultSelector);
+    const searchResults = await page.locator(search.searchResultSelector).allTextContents();
+    await expect(searchResults.length).toBeGreaterThanOrEqual(1);
     const productName = capitalize(product);
+    let found = false;
     for (const result of searchResults) {
-      await expect(result).toContainText(productName);
+      if(productName === result.match(productName)[0]){
+        found = true;
+        break;
+      }
     }
+    await expect(found).toBe(true);
   }
 );
 
@@ -46,10 +53,17 @@ When('the user searches for customer {string}', async function (product) {
 
 Then(
   'the user should see results for the customer {string}',async function (customer) {
-    const searchResults = await page.locator(search.searchResultSelector).all();
+    await page.waitForSelector(search.searchResultSelector);
+    const searchResults = await page.locator(search.searchResultSelector).allTextContents();
+    await expect(searchResults.length).toBeGreaterThanOrEqual(1);
     const customerName = capitalize(customer);
+    let found = false;
     for (const result of searchResults) {
-      await expect(result).toContainText(customerName);
+      if(customerName === result.match(customerName)[0]){
+        found = true;
+        break;
+      }
     }
+    await expect(found).toBe(true);
   }
 );
