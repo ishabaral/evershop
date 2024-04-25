@@ -16,7 +16,7 @@ class AddCouponPage {
     this.inputMinPurchaseAmt = "//input[@name='condition[order_total]']";
     this.inputMinPurchaseQty = "//input[@name='condition[order_qty]']";
     this.saveBtnSelector = "//span[text()='Save']";
-    this.addedCouponSelector = "//a[text()='coupon123']";
+    this.editCouponSelector ="//h1[text()='Editing coupon123']";
   }
 
   async addCoupon(dataTable) {

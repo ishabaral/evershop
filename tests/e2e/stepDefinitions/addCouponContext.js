@@ -13,9 +13,8 @@ When(
 );
 
 Then(
-  'user {string} should be able to view the added coupon',
+  'user {string} should be able to edit the added coupon',
   async function (string) {
-    await viewCouponsPage.navigateToCouponsPage();
-    await expect(page.locator(addCouponPage.addedCouponSelector)).toBeVisible();
+    await expect(page.locator(addCouponPage.editCouponSelector)).toBeVisible();
   }
 );
