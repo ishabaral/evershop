@@ -12,11 +12,11 @@ Given('user {string} has logged in', async function (user) {
     await login.navigateToLoginPage();
     const { email, password } = getUserCredentials(user);
     await login.login(email, password);
+    await page.waitForURL(login.adminDashboardPageURL);
   }
 );
 
 Given('the user has navigated to the admin panel dashboard', async function () {
-  await new Promise(resolve => setTimeout(resolve, 5000));
   await expect(page).toHaveURL(login.adminDashboardPageURL);
 });
 
