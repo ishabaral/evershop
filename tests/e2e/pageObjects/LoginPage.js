@@ -2,8 +2,8 @@ const config = require('../config');
 
 class Login {
   constructor() {
-    this.logInPageURL = `${config.baseEvershopAdminUrl}/login`;
-    this.adminDashboardPageURL = config.baseEvershopAdminUrl;
+    this.logInPageURL = `${config.baseUrl}/admin/login`;
+    this.adminDashboardPageURL = `${config.baseUrl}/admin`;
     this.loginBtnSelector = 'button';
   }
 

@@ -1,14 +1,14 @@
 Feature: Search
     As a user
-    I want to find details of a product or customer
-    So that I can know if they exists
+    I want to search a product
+    So that I can manage the product
 
     Background:
         Given user "admin" has logged in
-        And the user has navigated to the admin panel dashboard
+        And the user has navigated to the admin dashboard
 
 
-    Scenario: try to make a search
+    Scenario: try to search for a product
         When the user searches for product "gown"
         Then the result should be empty
 

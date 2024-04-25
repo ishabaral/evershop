@@ -3,7 +3,6 @@ const { expect } = require('@playwright/test');
 const Login = require('../pageObjects/LoginPage');
 const Search = require('../pageObjects/SearchPage');
 const getUserCredentials = require('../utils/userHelper');
-const capitalize = require('../utils/stringHelper');
 
 const login = new Login();
 const search = new Search();
@@ -16,7 +15,7 @@ Given('user {string} has logged in', async function (user) {
   }
 );
 
-Given('the user has navigated to the admin panel dashboard', async function () {
+Given('the user has navigated to the admin dashboard', async function () {
   await expect(page).toHaveURL(login.adminDashboardPageURL);
 });
 
@@ -25,8 +24,8 @@ When('the user searches for product {string}', async function (product) {
 });
 
 Then('the result should be empty', async function () {
-  const noResult = await page.locator(search.displayResultSelector);
-  await expect(noResult).toBeVisible();
+  const searchResults = await page.locator(search.displayResultSelector).first();
+  await expect(searchResults).toContainText("TRY OTHER RESOURCES");
 });
 
 Then(
@@ -34,10 +33,9 @@ Then(
     await page.waitForSelector(search.searchResultSelector);
     const searchResults = await page.locator(search.searchResultSelector).allTextContents();
     await expect(searchResults.length).toBeGreaterThanOrEqual(1);
-    const productName = capitalize(product);
     let found = false;
     for (const result of searchResults) {
-      if(productName === result.match(productName)[0]){
+      if(result.toLowerCase().includes(product.toLowerCase())){
         found = true;
         break;
       }
