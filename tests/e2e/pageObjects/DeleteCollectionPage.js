@@ -2,7 +2,6 @@ const { expect } = require('playwright/test');
 
 class DeleteCollectionPage {
   constructor() {
-    //locators
     this.checkboxSelector = '//tbody/tr/td[1]';
     this.deleteSelector = "//span[text()='Delete']";
     this.criticalDeleteSelector = "//button[@class='button critical']";

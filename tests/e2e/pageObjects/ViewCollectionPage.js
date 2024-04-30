@@ -2,7 +2,6 @@ const { expect } = require('playwright/test');
 
 class ViewCollectionPage {
   constructor() {
-    //locators
     this.adminPanelUrl = 'http://localhost:3000/admin';
     this.adminLoginUrl = 'http://localhost:3000/admin/login';
     this.emailSelector = "//input[@name='email']";
@@ -25,6 +24,7 @@ class ViewCollectionPage {
   async clickLoginBtn() {
     await page.click(this.loginBtnSelector);
   }
+
   async navigateToCollections() {
     await page.click(this.collectionsBtnSelector);
   }

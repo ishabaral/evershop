@@ -2,7 +2,6 @@ const { expect } = require('playwright/test');
 
 class AddCollectionPage {
   constructor() {
-    //locators
     this.newCollectionBtnSelector = "//a[@href='/admin/collections/new']";
     this.nameInputSelector = "//input[@name='name']";
     this.uniqueIdInputSelector = "//input[@name='code']";
