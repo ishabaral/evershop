@@ -25,6 +25,5 @@ Then(
       attributeHandle
     );
     expect(text).toEqual('Editing ' + name);
-    // await viewAttributePage.navigateToAttribute()
   }
 );

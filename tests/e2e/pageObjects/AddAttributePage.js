@@ -2,24 +2,20 @@ const { expect } = require('playwright/test');
 
 class AddAttributePage {
   constructor() {
-    //locators
     this.addNewAttributeUrl = 'http://localhost:3000/admin/attributes/new';
     this.addAttributeBtnSelector = "//a[@href='/admin/attributes/new']";
 
-    //selectors used to fill and click/check
     this.inputNameSelector = "//input[@name='attribute_name']";
     this.inputCodeSelector = "//input[@name='attribute_code']";
     this.inputSortOrderSelector = "//input[@name='sort_order']";
     this.saveBtnSelector = "//button[@class='button primary']";
     this.groupSelector = "//div[@class=' css-6j8wv5-Input']";
 
-    //attribute type selector
     this.textRadioBtnSelector = "//span[text()='Text']";
     this.selectRadioBtnSelector = "//span[text()='Select']";
     this.multiselectRadioBtnSelector = "//span[text()='Multiselect']";
     this.textareaRadioBtnSelector = "//span[text()='Textarea']";
 
-    //attributes selector
     this.editAttributeSelector = "//h1[text()='Editing %s']";
   }
   async addAttributes(dataTable) {
@@ -50,8 +46,6 @@ class AddAttributePage {
       await page.keyboard.press('Enter');
       await page.fill(this.inputSortOrderSelector, attribute.order);
       await page.click(this.saveBtnSelector);
-      // await new Promise(resolve => setTimeout(resolve, 5000));
-      // await page.goto(this.addNewAttributeUrl);
     }
   }
 }
