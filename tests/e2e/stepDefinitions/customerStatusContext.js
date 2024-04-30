@@ -7,6 +7,7 @@ const customerStatusPage = new CustomerStatusPage();
 When(
   'user {string} disables a customer with email {string}',
   async function (string, string2) {
+    await new Promise(resolve => setTimeout(resolve, 2000))
     await customerStatusPage.disableCustomerStatus();
   }
 );
@@ -22,6 +23,7 @@ Then('user with email {string} should be disabled', async function (string) {
 When(
   'user {string} enables a customer with email {string}',
   async function (string, string2) {
+    await new Promise(resolve => setTimeout(resolve, 2000))
     await customerStatusPage.enableCustomerStatus();
   }
 );

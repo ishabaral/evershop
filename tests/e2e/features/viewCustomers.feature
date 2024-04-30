@@ -6,8 +6,8 @@
     Background: 
         Given user 'admin' has navigated to the admin login page
         And user 'admin' login with following credentials
-            |   email                 | password       |
-            | prasantgrg777@gmail.com | pSynidexxx.899 | 
+            | email           | password |
+            | admin@admin.com | a1234578 | 
 
 
     Scenario: navigation to customers page

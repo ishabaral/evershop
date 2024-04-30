@@ -2,7 +2,6 @@ const { expect } = require('playwright/test');
 
 class SearchCustomerPage {
   constructor() {
-    //locators
     this.inputNameSelector = "//input[@placeholder='Full Name']";
     this.inputEmailSelector = "//input[@placeholder='Email']";
     this.customerNameSelector1 = "//a[text()='Larry']";
@@ -11,14 +10,12 @@ class SearchCustomerPage {
 
   async searchByName(name) {
     await page.fill(this.inputNameSelector, name);
+    await page.keyboard.press('Enter');
   }
 
   async searchByEmail(email) {
     await page.fill(this.inputEmailSelector, email);
-  }
-  async pressEnter() {
     await page.keyboard.press('Enter');
   }
-
 }
 module.exports = { SearchCustomerPage };

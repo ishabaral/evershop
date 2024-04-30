@@ -2,7 +2,6 @@ const { expect } = require('playwright/test');
 
 class CustomerStatusPage {
   constructor() {
-    //locators
     this.checkboxSelector1 =
       "//td[text()='harry2@gmail.com']/preceding-sibling::td/div/div/label/span";
     this.checkboxSelector2 =
