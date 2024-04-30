@@ -20,6 +20,7 @@ When(
     await viewCouponsPage.clickLoginBtn();
   }
 );
+
 When('user {string} navigates to coupons page', async function (string) {
   await viewCouponsPage.navigateToCouponsPage();
 });

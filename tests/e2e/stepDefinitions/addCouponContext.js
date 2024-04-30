@@ -1,9 +1,7 @@
 const { When, Then } = require('@cucumber/cucumber');
 const { expect } = require('playwright/test');
-const { ViewCouponsPage } = require('../pageObjects/ViewCouponsPage');
 const { AddCouponPage } = require('../pageObjects/AddCouponPage');
 
-const viewCouponsPage = new ViewCouponsPage();
 const addCouponPage = new AddCouponPage();
 When(
   'user {string} creates new coupon with following details',

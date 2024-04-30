@@ -6,7 +6,7 @@
     Background: 
         Given user 'admin' has navigated to the admin login page
         And user 'admin' login with following credentials
-            |     email       | password |
+            | email           | password |
             | admin@admin.com | a1234578 | 
 
 
