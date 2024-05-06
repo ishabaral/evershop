@@ -31,15 +31,9 @@ Then('the result should be empty', async function () {
 Then(
   'the user should see results for the product {string}',async function (product) {
     await page.waitForSelector(search.searchResultSelector);
-    const searchResults = await page.locator(search.searchResultSelector).allTextContents();
+    const searchResults = await search.searchResults();
     await expect(searchResults.length).toBeGreaterThanOrEqual(1);
-    let found = false;
-    for (const result of searchResults) {
-      if(result.toLowerCase().includes(product.toLowerCase())){
-        found = true;
-        break;
-      }
-    }
-    await expect(found).toBe(true);
+    const resultFound = await search.resultFound(product);
+    await expect(resultFound).toBe(true);
   }
 );
