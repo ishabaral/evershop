@@ -5,6 +5,11 @@ const { select } = require('@evershop/postgres-query-builder');
 const { comparePassword } = require('../../lib/util/passwordHelper');
 const { translate } = require('../../lib/locale/translate/translate');
 const { addProcessor } = require('../../lib/util/registry');
+const registerDefaultCustomerCollectionFilters = require('./services/registerDefaultCustomerCollectionFilters');
+const {
+  defaultPaginationFilters
+} = require('../../lib/util/defaultPaginationFilters');
+const registerDefaultCustomerGroupCollectionFilters = require('./services/registerDefaultCustomerGroupCollectionFilters');
 
 module.exports = () => {
   addProcessor('cartFields', (fields) => {
@@ -155,4 +160,28 @@ module.exports = () => {
     }
   };
   config.util.setModuleDefaults('customer', customerConfig);
+
+  // Reigtering the default filters for customer collection
+  addProcessor(
+    'customerCollectionFilters',
+    registerDefaultCustomerCollectionFilters,
+    1
+  );
+  addProcessor(
+    'customerCollectionFilters',
+    (filters) => [...filters, ...defaultPaginationFilters],
+    2
+  );
+
+  // Reigtering the default filters for customer group collection
+  addProcessor(
+    'customerGroupCollectionFilters',
+    registerDefaultCustomerGroupCollectionFilters,
+    1
+  );
+  addProcessor(
+    'customerGroupCollectionFilters',
+    (filters) => [...filters, ...defaultPaginationFilters],
+    2
+  );
 };

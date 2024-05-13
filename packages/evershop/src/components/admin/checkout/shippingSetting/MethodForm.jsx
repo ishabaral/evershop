@@ -10,12 +10,16 @@ import CreatableSelect from 'react-select/creatable';
 import Spinner from '@components/common/Spinner';
 import { useQuery } from 'urql';
 import { toast } from 'react-toastify';
+import PriceBasedPrice from '@components/admin/checkout/shippingSetting/PriceBasedPrice';
+import WeightBasedPrice from '@components/admin/checkout/shippingSetting/WeightBasedPrice';
+import { Input } from '@components/common/form/fields/Input';
 
 const MethodsQuery = `
   query Methods {
     shippingMethods {
       value: shippingMethodId
       label: name
+      updateApi
     }
     createShippingMethodApi: url(routeId: "createShippingMethod")
   }
@@ -83,9 +87,18 @@ Condition.defaultProps = {
 };
 
 function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
-  const [type, setType] = React.useState(
-    method?.calculateApi ? 'api' : 'flat_rate'
-  );
+  const [type, setType] = React.useState(() => {
+    if (method?.calculateApi) {
+      return 'api';
+    }
+    if (method?.priceBasedCost) {
+      return 'price_based_rate';
+    }
+    if (method?.weightBasedCost) {
+      return 'weight_based_rate';
+    }
+    return 'flat_rate';
+  });
   const [isLoading, setIsLoading] = React.useState(false);
   const [shippingMethod, setMethod] = React.useState(
     method
@@ -98,6 +111,8 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
   const [hasCondition, setHasCondition] = React.useState(
     !!method?.conditionType
   );
+  const [name, setName] = React.useState(method?.name || '');
+  const [updatingName, setUpdatingName] = React.useState(false);
 
   const [result, reexecuteQuery] = useQuery({
     query: MethodsQuery
@@ -127,6 +142,10 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
     );
   }
 
+  const currentMethod = result.data.shippingMethods.find(
+    (m) => m.value === shippingMethod?.value
+  );
+
   return (
     <Card title="Shipping method">
       <Form
@@ -138,21 +157,78 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
           if (!response.error) {
             await getZones({ requestPolicy: 'network-only' });
             closeModal();
+            toast.success('Shipping method saved successfully');
           } else {
             toast.error(response.error.message);
           }
         }}
       >
         <Card.Session title="Method name">
-          <CreatableSelect
-            isClearable
-            isDisabled={isLoading}
-            isLoading={isLoading}
-            onChange={(newValue) => setMethod(newValue)}
-            onCreateOption={handleCreate}
-            options={result.data.shippingMethods}
-            value={shippingMethod}
-          />
+          {!method ? (
+            <CreatableSelect
+              isClearable
+              isDisabled={isLoading}
+              isLoading={isLoading}
+              onChange={(newValue) => setMethod(newValue)}
+              onCreateOption={handleCreate}
+              options={result.data.shippingMethods}
+              value={shippingMethod}
+            />
+          ) : (
+            <div className="flex gap-1 justify-start items-center">
+              <Input
+                name="name"
+                type="text"
+                placeholder="Method name"
+                validationRules={['notEmpty']}
+                value={name}
+                disabled={!updatingName}
+                suffix={
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (updatingName) setName(method.name);
+                      setUpdatingName(!updatingName);
+                    }}
+                  >
+                    <span className="text-interactive">
+                      {updatingName ? 'Cancel' : 'Edit'}
+                    </span>
+                  </a>
+                }
+                onChange={(e) => setName(e.target.value)}
+              />
+              {updatingName && (
+                <Button
+                  title="Save"
+                  variant="primary"
+                  onAction={async () => {
+                    // Use fetch to call the API (method.updateApi) to update the method name
+                    // The API should accept a PATCH request with the new name as the payload
+                    // The API should return the updated method object
+                    const response = await fetch(currentMethod.updateApi, {
+                      method: 'PATCH',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      credentials: 'same-origin',
+                      body: JSON.stringify({
+                        name
+                      })
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                      setName(data.name);
+                      setUpdatingName(false);
+                    } else {
+                      toast.error(data.error.message);
+                    }
+                  }}
+                />
+              )}
+            </div>
+          )}
           <Field
             type="hidden"
             name="method_id"
@@ -166,6 +242,8 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
             name="calculation_type"
             options={[
               { text: 'Flat rate', value: 'flat_rate' },
+              { text: 'Price based rate', value: 'price_based_rate' },
+              { text: 'Weight based rate', value: 'weight_based_rate' },
               { text: 'API calculate', value: 'api' }
             ]}
             defaultValue={method?.calculateApi ? 'api' : 'flat_rate'}
@@ -182,6 +260,12 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
               validationRules={['notEmpty']}
               value={method?.cost?.value}
             />
+          )}
+          {type === 'price_based_rate' && (
+            <PriceBasedPrice lines={method?.priceBasedCost || []} />
+          )}
+          {type === 'weight_based_rate' && (
+            <WeightBasedPrice lines={method?.weightBasedCost || []} />
           )}
           {type === 'api' && (
             <Field
@@ -210,7 +294,14 @@ function MethodForm({ saveMethodApi, closeModal, getZones, method }) {
         </Card.Session>
         <Card.Session>
           <div className="flex justify-end gap-1">
-            <Button title="Cancel" variant="secondary" onAction={closeModal} />
+            <Button
+              title="Cancel"
+              variant="secondary"
+              onAction={async () => {
+                await getZones({ requestPolicy: 'network-only' });
+                closeModal();
+              }}
+            />
             <Button
               title="Save"
               variant="primary"
@@ -242,6 +333,26 @@ MethodForm.propTypes = {
     cost: PropTypes.shape({
       value: PropTypes.string
     }),
+    priceBasedCost: PropTypes.arrayOf(
+      PropTypes.shape({
+        minPrice: PropTypes.shape({
+          value: PropTypes.number
+        }),
+        cost: PropTypes.shape({
+          value: PropTypes.number
+        })
+      })
+    ),
+    weightBasedCost: PropTypes.arrayOf(
+      PropTypes.shape({
+        minWeight: PropTypes.shape({
+          value: PropTypes.number
+        }),
+        cost: PropTypes.shape({
+          value: PropTypes.number
+        })
+      })
+    ),
     conditionType: PropTypes.string,
     min: PropTypes.string,
     max: PropTypes.string

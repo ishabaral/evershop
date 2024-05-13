@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+import CogIcon from '@heroicons/react/outline/CogIcon';
 import { useModal } from '@components/common/modal/useModal';
-import MethodForm from './MethodForm';
+import MethodForm from '@components/admin/checkout/shippingSetting/MethodForm';
 
 function Method({ method, getZones }) {
   const modal = useModal();
@@ -12,7 +14,20 @@ function Method({ method, getZones }) {
         <td className="border-none py-1">
           {method.isEnabled ? 'Enabled' : 'Disabled'}
         </td>
-        <td className="border-none py-1">{method.cost?.text}</td>
+        <td className="border-none py-1">
+          {method.cost?.text || (
+            <a
+              href="#"
+              className="text-interactive"
+              onClick={(e) => {
+                e.preventDefault();
+                modal.openModal();
+              }}
+            >
+              <CogIcon width={22} height={22} />
+            </a>
+          )}
+        </td>
         <td className="border-none py-1">
           {method.conditionType
             ? `${method.min || 0} <= ${method.conditionType} <= ${
@@ -30,6 +45,35 @@ function Method({ method, getZones }) {
             }}
           >
             Edit
+          </a>
+          <a
+            href="#"
+            className="text-critical ml-2"
+            onClick={async (e) => {
+              e.preventDefault();
+              try {
+                const response = await fetch(method.deleteApi, {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  credentials: 'include'
+                });
+                if (response.ok) {
+                  await getZones();
+                  // Toast success
+                  toast.success('Method removed successfully');
+                } else {
+                  // Toast error
+                  toast.error('Failed to remove method');
+                }
+              } catch (error) {
+                // Toast error
+                toast.error('Failed to remove method');
+              }
+            }}
+          >
+            Delete
           </a>
         </td>
       </>
@@ -62,10 +106,23 @@ Method.propTypes = {
     cost: PropTypes.shape({
       text: PropTypes.string.isRequired
     }),
+    priceBasedCost: PropTypes.arrayOf(
+      PropTypes.shape({
+        minPrice: PropTypes.number.isRequired,
+        cost: PropTypes.number.isRequired
+      })
+    ),
+    weightBasedCost: PropTypes.arrayOf(
+      PropTypes.shape({
+        minWeight: PropTypes.number.isRequired,
+        cost: PropTypes.number.isRequired
+      })
+    ),
     conditionType: PropTypes.string.isRequired,
     min: PropTypes.number.isRequired,
     max: PropTypes.number.isRequired,
-    updateApi: PropTypes.string.isRequired
+    updateApi: PropTypes.string.isRequired,
+    deleteApi: PropTypes.string.isRequired
   }).isRequired,
   getZones: PropTypes.func.isRequired
 };

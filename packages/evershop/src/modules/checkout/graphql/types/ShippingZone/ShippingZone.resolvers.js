@@ -73,6 +73,23 @@ module.exports = {
         zone_id: zone.uuid,
         method_id: uuid
       });
+    },
+    deleteApi: async ({ uuid, zoneId }) => {
+      const zone = await select()
+        .from('shipping_zone')
+        .where('shipping_zone_id', '=', zoneId)
+        .load(pool);
+
+      return buildUrl('deleteShippingZoneMethod', {
+        zone_id: zone.uuid,
+        method_id: uuid
+      });
     }
+  },
+  WeightBasedCostItem: {
+    minWeight: ({ min_weight }) => min_weight
+  },
+  PriceBasedCostItem: {
+    minPrice: ({ min_price }) => min_price
   }
 };
