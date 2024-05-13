@@ -1,0 +1,64 @@
+name: Testing workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run_project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - uses: ikalnytskyi/action-setup-postgres@v5
+
+      - name: Setup db
+        env:
+          PGHOST: localhost
+          PGDATABASE: evershop
+          PGUSER: postgres
+          PGPASSWORD: postgres
+        run: |
+          createdb --owner $PGUSER $PGDATABASE
+          psql -c "ALTER USER $PGUSER WITH PASSWORD '$PGPASSWORD'"
+
+
+      - name: Setup node
+        uses: actions/setup-node@v2 
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run setup environment
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: evershop
+          PGUSER: postgres
+          PGPASSWORD: postgres 
+          USER: abc
+          EMAIL: abc@abc.com
+          PASSWORD: abc1234
+        run:  |
+          npm run setup
+          npm run dev &
+        
+      - name: Wait for development server
+        run: |
+          sudo apt-get install wait-for-it -y
+          wait-for-it -h localhost -p 3000 -t 10
+
+      - name: Run e2e tests
+        working-directory: tests
+        run: |
+          npm install
+          npx playwright install chromium
+          npm run test:e2e e2e
