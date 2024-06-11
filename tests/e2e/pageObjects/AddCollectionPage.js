@@ -20,3 +20,4 @@ class AddCollectionPage {
   }
 }
 module.exports = { AddCollectionPage };
+//random comment
