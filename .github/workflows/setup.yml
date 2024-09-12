@@ -49,6 +49,19 @@ jobs:
           cd ..
           npm run user:create -- --name admin --email $ADMIN_EMAIL --password $ADMIN_PASSWORD 
           npm run dev &
+          
+      - name: Modify data in collections tables
+        env:
+          NODE_ENV: production
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: evershop
+          DB_USER: postgres
+          DB_TABLE: collection
+          PGPASSWORD: pgAdmin12345
+        run: |
+            cd tests
+            ./modifyData.sh
 
       - name: Wait for development server
         run: |
